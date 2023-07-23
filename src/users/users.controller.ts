@@ -1,28 +1,48 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { User } from '../users/user.entity';
+import { User } from '../entities/user.entity';
+import { UserRoom } from '../entities/user-room.entity';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { Request } from 'express';
 
 @Controller('users')
 export class UsersController {
     constructor(private readonly userService: UsersService) { }
 
-    @Get()
-    async getAllUsers(): Promise<User[]> {
-        return this.userService.findAllUsers();
+    @Get('rooms')
+    async getAllRooms(): Promise<UserRoom[]> {
+        return this.userService.findAllRooms();
     }
 
-    @Post()
-    async createUser(@Body('name') name: string, @Body('room') room: string, @Body('id') id: string): Promise<User> {
-        return this.userService.createUser(name, room, id);
-    }
-
-    @Get(':id')
+    
+    @UseGuards(AuthGuard)
+    @Get('profile:id')
     async user(@Param('id') id): Promise<User> {
         return this.userService.getUser(id);
     }
     
-    @Get('room/:id')
-    async getUsersInRoom(@Param('id') id): Promise<User[]> {
-        return this.userService.getUsersInRoom(id);
+    @Get('roomUsers/:name')
+    async getUsersInRoom(@Param('name') name): Promise<User[]> {
+        return this.userService.getUsersInRoom(name);
     }
+    @Get('roomMessages/:room')
+    async getRoomMessages(@Param('room') room): Promise<User[]> {
+        return this.userService.getRoomMessages(room);
+    }
+
+    
+
+    @UseGuards(AuthGuard)
+    @Get('userRooms')
+    async userRooms(@Req() req:any): Promise<UserRoom[]> {
+        return this.userService.getUserRooms(req.user.id)
+    }
+    
+    @UseGuards(AuthGuard)
+    @Post('createRoom')
+    async createRoom(@Req() req:any): Promise<UserRoom> {
+        return this.userService.createRoom(req.user.id,req.body.room)
+    }
+    
+    
 }

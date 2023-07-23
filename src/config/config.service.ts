@@ -9,7 +9,7 @@ class ConfigService {
     console.log(__dirname+'*.entity{.ts,.js}')
   }
 
-  private getValue(key: string, throwOnMissing = true): string {
+   getValue(key: string, throwOnMissing = true): string {
     const value = this.env[key];
     if (!value && throwOnMissing) {
       throw new Error(`config error - missing env.${key}`);
