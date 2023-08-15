@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Param, UseGuards, Req } from '@nestjs/comm
 import { UsersService } from './users.service';
 import { User } from '../entities/user.entity';
 import { UserRoom } from '../entities/user-room.entity';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from './../auth/auth.guard';
 import { Request } from 'express';
 
 @Controller('users')
